@@ -1,0 +1,36 @@
+{% extends "cards/base.html" %}
+
+{% block title %}Тема: {{ topic.name }}{% endblock %}
+
+{% block content %}
+<h2>Тема: {{ topic.name }}</h2>
+<p><a href="{% url 'topics_list' %}">← ко всем темам</a></p>
+<p><a href="{% url 'card_add' %}">Добавить карточку в эту или другую тему</a></p>
+
+{% if cards %}
+<table class="tbl">
+    <thead>
+        <tr>
+            <th>Термин</th>
+            <th>Кратко</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for c in cards %}
+        <tr>
+            <td>{{ c.term }}</td>
+            <td>{{ c.translation|truncatewords:8 }}</td>
+            <td>
+                <a href="{% url 'card_detail' c.id %}">открыть</a>
+                |
+                <a href="{% url 'card_edit' c.id %}">правка</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>В этой теме пока нет карточек.</p>
+{% endif %}
+{% endblock %}

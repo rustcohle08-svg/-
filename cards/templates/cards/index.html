@@ -1,0 +1,21 @@
+{% extends "cards/base.html" %}
+
+{% block title %}Главная — исторические карточки{% endblock %}
+
+{% block content %}
+<h2>Добро пожаловать</h2>
+
+<p class="home-tagline">Этот сайт помогает учить историю</p>
+
+<p class="home-stats">
+    Сейчас в базе <strong>{{ topics_count }}</strong> тем
+    и <strong>{{ cards_count }}</strong> карточек.
+</p>
+
+<nav class="home-actions" aria-label="Основные действия">
+    <a href="{% url 'topics_list' %}" class="btn btn-home">Посмотреть список тем</a>
+    <a href="{% url 'topic_add' %}" class="btn btn-home">Создать новую тему</a>
+    <a href="{% url 'card_add' %}" class="btn btn-home">Добавить карточку</a>
+    <a href="{% url 'quiz' %}" class="btn btn-home">Потренироваться (тест по теме)</a>
+</nav>
+{% endblock %}

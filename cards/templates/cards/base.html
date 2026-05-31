@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <title>{% block title %}История — карточки{% endblock %}</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'cards/style.css' %}">
+</head>
+<body>
+    <header class="top">
+        <h1>Исторические карточки</h1>
+        <nav>
+            <a href="{% url 'index' %}">Главная</a>
+            <a href="{% url 'topics_list' %}">Темы</a>
+            <a href="{% url 'topic_add' %}">Добавить тему</a>
+            <a href="{% url 'card_add' %}">Добавить карточку</a>
+            <a href="{% url 'quiz' %}">Тест</a>
+        </nav>
+    </header>
+    <main class="content">
+        {% block content %}{% endblock %}
+    </main>
+    <footer class="bottom">
+    </footer>
+</body>
+</html>

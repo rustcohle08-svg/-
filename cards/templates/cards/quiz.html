@@ -1,0 +1,122 @@
+{% extends "cards/base.html" %}
+
+{% block title %}Тест{% endblock %}
+
+{% block content %}
+<h2>Тест по карточкам</h2>
+
+{% if error_message %}
+<p class="errors">{{ error_message }}</p>
+{% endif %}
+
+{% if show_results %}
+<div class="quiz-results" role="dialog" aria-labelledby="quiz-results-title">
+    {% if all_correct %}
+    <h3 id="quiz-results-title">🎉 Поздравляем! Все верно!</h3>
+    <p>Вы ответили правильно на все {{ stats.correct }} карточек темы «{{ selected_topic.name }}».</p>
+    <form method="post" class="quiz-results-actions">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="finish">
+        <button type="submit" class="btn">Закончить</button>
+    </form>
+    {% else %}
+    <h3 id="quiz-results-title">Итоги теста</h3>
+    <p class="quiz-stats-line">
+        Правильно: <strong>{{ stats.correct }}</strong>,
+        Неправильно: <strong>{{ stats.incorrect }}</strong>
+    </p>
+    <p>Тема: «{{ selected_topic.name }}»</p>
+    <form method="post" class="quiz-results-actions">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="finish">
+        <button type="submit" class="btn">Закончить</button>
+    </form>
+    {% if has_mistakes %}
+    <form method="post" class="quiz-results-actions">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="retry_mistakes">
+        <button type="submit" class="btn btn-secondary">Работа над ошибками</button>
+    </form>
+    <p class="hint">Повторный раунд — только карточки с неверным ответом ({{ mistakes|length }} шт.)</p>
+    {% endif %}
+    {% endif %}
+</div>
+
+{% elif quiz_active and selected_topic and card %}
+<p class="quiz-meta">
+    Тема: <strong>{{ selected_topic.name }}</strong>
+    · Карточка {{ cards_done|add:1 }} из {{ total_cards }}
+</p>
+
+<div class="card-box quiz-card">
+    <p class="label">Вопрос (термин):</p>
+    <p class="big">{{ card.term }}</p>
+
+    {% if phase == 'question' %}
+    <form method="post" class="quiz-step">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="show_answer">
+        <button type="submit" class="btn">Показать ответ</button>
+    </form>
+    {% elif phase == 'answer' %}
+    <hr class="quiz-divider">
+    <p class="label">Ответ (пояснение):</p>
+    <p class="quiz-answer">{{ card.translation|linebreaksbr }}</p>
+    <p class="label">Как вы ответили?</p>
+    <div class="quiz-rate-row">
+        <form method="post" class="quiz-rate-form">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="rate">
+            <input type="hidden" name="card_id" value="{{ card.id }}">
+            <input type="hidden" name="rating" value="correct">
+            <button type="submit" class="btn btn-good">✅ Ответил верно</button>
+        </form>
+        <form method="post" class="quiz-rate-form">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="rate">
+            <input type="hidden" name="card_id" value="{{ card.id }}">
+            <input type="hidden" name="rating" value="incorrect">
+            <button type="submit" class="btn btn-bad">❌ Ответил неверно</button>
+        </form>
+    </div>
+    {% elif phase == 'rated' %}
+    <hr class="quiz-divider">
+    <p class="label">Ответ (пояснение):</p>
+    <p class="quiz-answer">{{ card.translation|linebreaksbr }}</p>
+    <p class="hint">Ответ зафиксирован. Переходите к следующей карточке.</p>
+    <form method="post" class="quiz-step">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="next">
+        <button type="submit" class="btn">Далее</button>
+    </form>
+    {% endif %}
+</div>
+
+<form method="post" class="quiz-exit">
+    {% csrf_token %}
+    <input type="hidden" name="action" value="exit">
+    <button type="submit" class="btn-link">Выйти из теста</button>
+</form>
+
+{% else %}
+<p>Выберите тему и начните тест. Каждая карточка показывается один раз, пока вы не завершите сессию.</p>
+
+{% if topics %}
+<form method="post" class="frm quiz-start">
+    {% csrf_token %}
+    <input type="hidden" name="action" value="start">
+    <div class="field">
+        <label for="topic_id">Тема:</label>
+        <select name="topic_id" id="topic_id" class="inp" required>
+            {% for t in topics %}
+            <option value="{{ t.id }}">{{ t.name }} ({{ t.num_cards }} карточек)</option>
+            {% endfor %}
+        </select>
+    </div>
+    <button type="submit" class="btn">Начать тест</button>
+</form>
+{% else %}
+<p>Сначала добавьте темы и карточки.</p>
+{% endif %}
+{% endif %}
+{% endblock %}

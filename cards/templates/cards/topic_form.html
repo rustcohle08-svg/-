@@ -1,0 +1,30 @@
+{% extends "cards/base.html" %}
+
+{% block title %}Новая тема{% endblock %}
+
+{% block content %}
+<h2>Добавить тему</h2>
+<form method="post" class="frm" novalidate>
+    {% csrf_token %}
+    <div class="field">
+        {{ form.name.label_tag }}
+        {{ form.name }}
+        {% if form.name.errors %}
+        <ul class="errors">
+            {% for e in form.name.errors %}
+            <li>{{ e }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+    </div>
+    {% if form.non_field_errors %}
+    <ul class="errors">
+        {% for e in form.non_field_errors %}
+        <li>{{ e }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+    <button type="submit" class="btn">Сохранить тему</button>
+</form>
+<p><a href="{% url 'topics_list' %}">Отмена, к списку тем</a></p>
+{% endblock %}

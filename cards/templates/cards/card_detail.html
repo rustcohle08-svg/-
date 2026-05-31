@@ -1,0 +1,17 @@
+{% extends "cards/base.html" %}
+
+{% block title %}Карточка: {{ card.term }}{% endblock %}
+
+{% block content %}
+<h2>Карточка</h2>
+<p><a href="{% url 'topic_detail' card.topic.id %}">← тема «{{ card.topic.name }}»</a></p>
+
+<div class="card-box">
+    <p class="label">Термин:</p>
+    <p class="big">{{ card.term }}</p>
+    <p class="label">Пояснение:</p>
+    <p>{{ card.translation|linebreaksbr }}</p>
+</div>
+
+<p><a href="{% url 'card_edit' card.id %}">Редактировать эту карточку</a></p>
+{% endblock %}

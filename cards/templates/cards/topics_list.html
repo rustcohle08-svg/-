@@ -1,0 +1,26 @@
+{% extends "cards/base.html" %}
+
+{% block title %}Список тем{% endblock %}
+
+{% block content %}
+<h2>Темы по истории</h2>
+<p>Нажмите на тему, чтобы увидеть карточки в виде таблицы.</p>
+{% if topics %}
+<table class="tbl">
+    <thead>
+        <tr>
+            <th>Тема</th>
+            <th>Сколько карточек</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for t in topics %}
+        <tr>
+            <td><a href="{% url 'topic_detail' t.id %}">{{ t.name }}</a></td>
+            <td>{{ t.num_cards }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endif %}
+{% endblock %}
